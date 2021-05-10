@@ -29,8 +29,12 @@ class HelloWorld(Resource):
 
 
 class Test(Resource):
-    def get(self):
-        return parser.parse_args()
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('name')
+        args = parser.parse_args()
+        print(args)
+        return args
 
 
 api.add_resource(HelloWorld, '/api/helloworld')

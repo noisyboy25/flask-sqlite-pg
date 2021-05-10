@@ -10,6 +10,20 @@
 
 <body>
   <h1>Hello World</h1>
+  <form>
+    <button id="submit">Submit</button>
+  </form>
+
+  <script>
+    const handleSubmit = async () => {
+      const res = await fetch('/api/test', { method: 'POST', headers: { 'Content-Type': "application/json" }, body: JSON.stringify({ name: 'TEST' }) });
+      const data = await res.json();
+      console.log(data);
+    }
+
+    const submit = document.getElementById('submit');
+    submit.addEventListener('click', () => handleSubmit());
+  </script>
 </body>
 
 </html>
