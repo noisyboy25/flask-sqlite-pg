@@ -19,8 +19,9 @@ window.addEventListener('load', async () => {
       body: JSON.stringify({ email, username, password }),
     });
     const payload = await res.json();
-    if (res.status === 200) {
-      setMode('profile');
+    console.log(res.status);
+    if (res.ok) {
+      setMode('login');
     }
     console.log(payload);
   };
@@ -37,7 +38,7 @@ window.addEventListener('load', async () => {
       body: JSON.stringify({ username, password }),
     });
     const payload = await res.json();
-    if (res.status !== 200) return console.log(payload.message);
+    if (!res.ok) return console.log(payload.message);
 
     auth = res.headers.get('Authorization');
     if (!auth) return;
