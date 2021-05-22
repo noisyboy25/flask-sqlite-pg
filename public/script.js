@@ -2,8 +2,8 @@ window.addEventListener('load', async () => {
   let token = '';
   let mode = 'register';
 
-  const registerForm = document.querySelector('.register-form');
-  const loginForm = document.querySelector('.login-form');
+  const formRegister = document.querySelector('.register-form');
+  const formLogin = document.querySelector('.login-form');
   const profile = document.querySelector('.profile');
 
   const handleRegister = async (event) => {
@@ -58,12 +58,14 @@ window.addEventListener('load', async () => {
     updateMode();
     getProfile();
   });
+
   const linkRegister = document.getElementById('link-register');
   linkRegister.addEventListener('click', (event) => {
     event.preventDefault();
     mode = 'register';
     updateMode();
   });
+
   const linkLogin = document.getElementById('link-login');
   linkLogin.addEventListener('click', (event) => {
     event.preventDefault();
@@ -72,21 +74,34 @@ window.addEventListener('load', async () => {
   });
 
   const updateMode = () => {
+    console.log(mode);
     switch (mode) {
       case 'register':
-        registerForm.classList.remove('hidden');
-        loginForm.classList.add('hidden');
+        formRegister.classList.remove('hidden');
+        formLogin.classList.add('hidden');
         profile.classList.add('hidden');
+
+        linkRegister.classList.add('selected');
+        linkLogin.classList.remove('selected');
+        linkProfile.classList.remove('selected');
         break;
       case 'login':
-        registerForm.classList.add('hidden');
-        loginForm.classList.remove('hidden');
+        formRegister.classList.add('hidden');
+        formLogin.classList.remove('hidden');
         profile.classList.add('hidden');
+
+        linkRegister.classList.remove('selected');
+        linkLogin.classList.add('selected');
+        linkProfile.classList.remove('selected');
         break;
       default:
-        registerForm.classList.add('hidden');
-        loginForm.classList.add('hidden');
+        formRegister.classList.add('hidden');
+        formLogin.classList.add('hidden');
         profile.classList.remove('hidden');
+
+        linkRegister.classList.remove('selected');
+        linkLogin.classList.remove('selected');
+        linkProfile.classList.add('selected');
     }
   };
 

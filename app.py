@@ -19,6 +19,9 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
 
+    def as_dict(self):
+        return {'id': self.id, 'username': self.username, 'email': self.email}
+
 
 @app.route('/')
 def index():
@@ -44,7 +47,12 @@ class Register(Resource):
         parser.add_argument('password')
         args = parser.parse_args()
         print(args)
-        return args
+        new_user = User(username=args['username'],
+                        email=args['email'], password=args['password'])
+        db.session.add(new_user)
+        db.session.commit()
+        print(new_user)
+        return new_user.as_dict(), 201
 
 
 class Login(Resource):
@@ -60,3 +68,6 @@ class Login(Resource):
 api.add_resource(Profile, '/api/profile')
 api.add_resource(Register, '/api/register')
 api.add_resource(Login, '/api/login')
+
+db.drop_all()
+db.create_all()

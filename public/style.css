@@ -51,6 +51,10 @@ button {
   padding: 0.5em;
 }
 
+.navbar ul li button.selected {
+  background: hsla(0, 0%, 0%, 0.3);
+}
+
 form button,
 form input {
   margin: 0.3em;
