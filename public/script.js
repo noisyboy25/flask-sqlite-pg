@@ -1,7 +1,6 @@
 window.addEventListener('load', async () => {
-  let token = '';
   let mode = 'register';
-  let userId = null;
+  let auth = '';
 
   const formRegister = document.querySelector('.register-form');
   const formLogin = document.querySelector('.login-form');
@@ -40,18 +39,16 @@ window.addEventListener('load', async () => {
     const payload = await res.json();
     if (res.status !== 200) return console.log(payload.message);
 
-    const auth = res.headers.get('Authorization');
+    auth = res.headers.get('Authorization');
     if (!auth) return;
-    token = auth || token;
-    userId = payload.user.id;
     console.log(payload);
     setMode('profile');
   };
 
   const getProfile = async () => {
     const securedContent = document.getElementById('content');
-    const res = await fetch(`/api/profile?u=${userId}`, {
-      headers: { Authorization: 'Basic ' + token },
+    const res = await fetch(`/api/profile`, {
+      headers: { Authorization: auth },
     });
     const payload = await res.json();
 

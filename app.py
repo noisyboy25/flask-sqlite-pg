@@ -11,6 +11,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+SECRET = 'secret'
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -36,11 +38,13 @@ class Profile(Resource):
         parser.add_argument('Authorization', location='headers')
         args = parser.parse_args()
         auth = args['Authorization'].split()[1].split(',')
+        print('AUTH')
         print(auth)
         user = User.query.filter_by(id=auth[0]).first()
-        print(user.as_dict())
         if not user:
             return {'message': 'User not found'}, 404
+
+        print(user.as_dict())
 
         if ph.verify(user.password, auth[1]):
             return {'message': 'success', 'data': {'username': user.username, 'email': user.email}}, 200
@@ -73,7 +77,7 @@ class Login(Resource):
         user = User.query.filter_by(username=args['username']).first()
         if not user:
             return {'message': 'Invalid username or password'}, 401
-        return {'user': {'id': user.id, 'username': user.username}}, 200, {'Authorization': f'Bearer {user.id},{123}'}
+        return {'user': {'id': user.id, 'username': user.username}}, 200, {'Authorization': f'Bearer {user.id},{args["password"]}'}
 
 
 api.add_resource(Profile, '/api/profile')
