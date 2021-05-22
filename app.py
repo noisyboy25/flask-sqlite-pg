@@ -1,4 +1,5 @@
 from flask import Flask, send_from_directory
+from flask.globals import request
 from flask_restful import Resource, Api, reqparse
 from flask_sqlalchemy import SQLAlchemy
 
@@ -13,29 +14,49 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(80), unique=False, nullable=False)
 
     def __repr__(self):
         return '<User %r>' % self.username
 
 
 @app.route('/')
-def hello_world():
+def index():
     return send_from_directory('public', 'index.html')
 
 
-class HelloWorld(Resource):
+class Profile(Resource):
     def get(self):
-        return {'hello': 'world'}
+        parser = reqparse.RequestParser()
+        parser.add_argument('Authorization', location='headers')
+        args = parser.parse_args()
+        print(args)
+        if args['Authorization'] == 'Basic ' + '123':
+            return {'message': 'success', 'data': {'username': 'user1'}}, 200
+        return {'message': 'Access denied'}, 403
 
 
-class Test(Resource):
+class Register(Resource):
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('name')
+        parser.add_argument('username')
+        parser.add_argument('email')
+        parser.add_argument('password')
         args = parser.parse_args()
         print(args)
         return args
 
 
-api.add_resource(HelloWorld, '/api/helloworld')
-api.add_resource(Test, '/api/test')
+class Login(Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('username')
+        parser.add_argument('password')
+        args = parser.parse_args()
+        print(args)
+        return args, 200, {'Authorization': 'Basic 123'}
+
+
+api.add_resource(Profile, '/api/profile')
+api.add_resource(Register, '/api/register')
+api.add_resource(Login, '/api/login')

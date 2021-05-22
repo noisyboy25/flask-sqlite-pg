@@ -1,29 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Security</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
+  <body>
+    <header>
+      <div class="container">
+        <nav class="navbar">
+          <ul>
+            <li><button id="link-profile">Profile</button></li>
+            <li><button id="link-register">Register</a></li>
+            <li><button id="link-login">Login</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
 
-<body>
-  <h1>Hello World</h1>
-  <form>
-    <button id="submit">Submit</button>
-  </form>
+    <div class="container">
+      <main>
+        <div class="profile">
+          <h3>Secured content</h3>
+          <div id="content"></div>
+        </div>
 
-  <script>
-    const handleSubmit = async () => {
-      const res = await fetch('/api/test', { method: 'POST', headers: { 'Content-Type': "application/json" }, body: JSON.stringify({ name: 'TEST' }) });
-      const data = await res.json();
-      console.log(data);
-    }
+        <form class="form login-form">
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            id="log-username"
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            id="log-password"
+          />
+          <button class="submit login" type="submit" id="log-submit">
+            Login
+          </button>
+        </form>
+        <form class="form register-form">
+          <input type="email" name="Email" placeholder="Email" id="reg-email" />
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            id="reg-username"
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            id="reg-password"
+          />
+          <button class="submit register" type="submit" id="reg-submit">
+            Register
+          </button>
+        </form>
+      </main>
+    </div>
 
-    const submit = document.getElementById('submit');
-    submit.addEventListener('click', () => handleSubmit());
-  </script>
-</body>
-
+    <script src="script.js"></script>
+  </body>
 </html>
