@@ -76,6 +76,7 @@ form input {
 .form .submit {
   font-weight: bold;
   border: none;
+  cursor: pointer;
 }
 
 .form .submit.register {
@@ -83,9 +84,17 @@ form input {
   color: white;
 }
 
+.form .submit.register:hover {
+  background: rgb(35, 128, 190);
+}
+
 .form .submit.login {
-  background-color: rgb(13, 212, 119);
+  background-color: rgb(12, 214, 120);
   color: white;
+}
+
+.form .submit.login:hover {
+  background-color: rgb(9, 151, 85);
 }
 
 .hidden {

@@ -1,6 +1,7 @@
 window.addEventListener('load', async () => {
   let token = '';
   let mode = 'register';
+  let userId = null;
 
   const formRegister = document.querySelector('.register-form');
   const formLogin = document.querySelector('.login-form');
@@ -19,6 +20,9 @@ window.addEventListener('load', async () => {
       body: JSON.stringify({ email, username, password }),
     });
     const payload = await res.json();
+    if (res.status === 200) {
+      setMode('profile');
+    }
     console.log(payload);
   };
 
@@ -33,18 +37,22 @@ window.addEventListener('load', async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
     });
-    const auth = res.headers.get('Authorization');
-    token = auth.split(' ')[1] || token;
     const payload = await res.json();
+    if (res.status !== 200) return console.log(payload.message);
+
+    const auth = res.headers.get('Authorization');
+    if (!auth) return;
+    token = auth || token;
+    userId = payload.user.id;
     console.log(payload);
+    setMode('profile');
   };
 
   const getProfile = async () => {
     const securedContent = document.getElementById('content');
-    const res = await fetch('/api/profile', {
+    const res = await fetch(`/api/profile?u=${userId}`, {
       headers: { Authorization: 'Basic ' + token },
     });
-    console.log('res', res);
     const payload = await res.json();
 
     securedContent.innerHTML =
@@ -54,36 +62,35 @@ window.addEventListener('load', async () => {
   const linkProfile = document.getElementById('link-profile');
   linkProfile.addEventListener('click', (event) => {
     event.preventDefault();
-    mode = 'profile';
-    updateMode();
+    setMode('profile');
     getProfile();
   });
 
   const linkRegister = document.getElementById('link-register');
   linkRegister.addEventListener('click', (event) => {
     event.preventDefault();
-    mode = 'register';
-    updateMode();
+    setMode('register');
   });
 
   const linkLogin = document.getElementById('link-login');
   linkLogin.addEventListener('click', (event) => {
     event.preventDefault();
-    mode = 'login';
-    updateMode();
+    setMode('login');
   });
 
-  const updateMode = () => {
+  const setMode = (newMode) => {
+    mode = newMode;
     console.log(mode);
     switch (mode) {
-      case 'register':
-        formRegister.classList.remove('hidden');
+      case 'profile':
+        formRegister.classList.add('hidden');
         formLogin.classList.add('hidden');
-        profile.classList.add('hidden');
+        profile.classList.remove('hidden');
 
-        linkRegister.classList.add('selected');
+        linkRegister.classList.remove('selected');
         linkLogin.classList.remove('selected');
-        linkProfile.classList.remove('selected');
+        linkProfile.classList.add('selected');
+        getProfile();
         break;
       case 'login':
         formRegister.classList.add('hidden');
@@ -95,13 +102,14 @@ window.addEventListener('load', async () => {
         linkProfile.classList.remove('selected');
         break;
       default:
-        formRegister.classList.add('hidden');
+        mode = 'register';
+        formRegister.classList.remove('hidden');
         formLogin.classList.add('hidden');
-        profile.classList.remove('hidden');
+        profile.classList.add('hidden');
 
-        linkRegister.classList.remove('selected');
+        linkRegister.classList.add('selected');
         linkLogin.classList.remove('selected');
-        linkProfile.classList.add('selected');
+        linkProfile.classList.remove('selected');
     }
   };
 
@@ -110,6 +118,5 @@ window.addEventListener('load', async () => {
   const submitLogin = document.getElementById('log-submit');
   submitLogin.addEventListener('click', handleLogin);
 
-  updateMode();
-  getProfile();
+  setMode('register');
 });

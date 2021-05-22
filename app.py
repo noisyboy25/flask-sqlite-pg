@@ -2,6 +2,8 @@ from flask import Flask, send_from_directory
 from flask.globals import request
 from flask_restful import Resource, Api, reqparse
 from flask_sqlalchemy import SQLAlchemy
+from argon2 import PasswordHasher
+ph = PasswordHasher()
 
 app = Flask(__name__, static_url_path='', static_folder='public')
 api = Api(app)
@@ -33,9 +35,15 @@ class Profile(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('Authorization', location='headers')
         args = parser.parse_args()
-        print(args)
-        if args['Authorization'] == 'Basic ' + '123':
-            return {'message': 'success', 'data': {'username': 'user1'}}, 200
+        auth = args['Authorization'].split()[1].split(',')
+        print(auth)
+        user = User.query.filter_by(id=auth[0]).first()
+        print(user.as_dict())
+        if not user:
+            return {'message': 'User not found'}, 404
+
+        if ph.verify(user.password, auth[1]):
+            return {'message': 'success', 'data': {'username': user.username, 'email': user.email}}, 200
         return {'message': 'Access denied'}, 403
 
 
@@ -48,7 +56,7 @@ class Register(Resource):
         args = parser.parse_args()
         print(args)
         new_user = User(username=args['username'],
-                        email=args['email'], password=args['password'])
+                        email=args['email'], password=ph.hash(args['password']))
         db.session.add(new_user)
         db.session.commit()
         print(new_user)
@@ -62,7 +70,10 @@ class Login(Resource):
         parser.add_argument('password')
         args = parser.parse_args()
         print(args)
-        return args, 200, {'Authorization': 'Basic 123'}
+        user = User.query.filter_by(username=args['username']).first()
+        if not user:
+            return {'message': 'Invalid username or password'}, 401
+        return {'user': {'id': user.id, 'username': user.username}}, 200, {'Authorization': f'Bearer {user.id},{123}'}
 
 
 api.add_resource(Profile, '/api/profile')
