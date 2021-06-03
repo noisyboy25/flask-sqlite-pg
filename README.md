@@ -7,8 +7,8 @@ python3 -m venv env
 ./env/Scripts/activate
 
 # Install dependecies
-python3 -m pip install -r ./requirements.txt
+pip install -r ./requirements.txt
 
 # Start the server
-python3 -m flask run
+flask run
 ```
